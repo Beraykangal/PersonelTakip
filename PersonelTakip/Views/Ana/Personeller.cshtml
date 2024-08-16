@@ -1,0 +1,302 @@
+﻿@model IEnumerable<PersonelModel>
+
+@{
+    ViewData["Title"] = "Personeller";
+    var universiteler = ViewBag.Universiteler as List<string>;
+}
+
+<link href="~/css/datatables-bs4/css/datatables.bootstrap4.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<section class="content-header">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Personeller</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label>Ad</label>
+                                    <input type="text" name="Ad" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>Soyad</label>
+                                    <input type="text" name="Soyad" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>Cinsiyet</label>
+                                    <div class="form-group">
+                                        <div class="form-check">
+                                            <input type="radio" id="cinsiyetKadın" name="Cinsiyet" value="K" class="form-check-input">
+                                            <label class="form-check-label" for="cinsiyetKadın">Kadın</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input type="radio" id="cinsiyetErkek" name="Cinsiyet" value="E" class="form-check-input">
+                                            <label class="form-check-label" for="cinsiyetErkek">Erkek</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <label>Mezuniyet</label>
+                                    <select class="form-control select2" name="Mezuniyet" style="width: 100%;">
+                                        <option value="0" selected="selected">Seçiniz...</option>
+                                        <option value="1">Önlisans</option>
+                                        <option value="2">Lisans</option>
+                                        <option value="3">Yüksek Lisans</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label>Üniversite</label>
+                                    <select class="form-control select2" name="Universite" style="width: 100%;">
+                                        <option value="0" selected="selected">Seçiniz...</option>
+                                        @if (universiteler != null)
+                                        {
+                                            foreach (string universite in universiteler)
+                                            {
+                                                <option value="@universite">@universite</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label>Zimmet</label>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="zimmet" onchange="toggleTextbox()">
+                                            <input type="text" name="Zimmet" class="form-control" id="zimmetTextbox" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4" style="margin-top:10px;">
+                                    <button type="button" class="btn btn-block btn-success btn-lg">Kaydet</button>
+                                </div>
+                                <div class="col-4" style="margin-top:10px;">
+                                    <button type="button" class="btn btn-block btn-danger btn-lg">Sil</button>
+                                </div>
+                                <div class="col-4" style="margin-top:10px;">
+                                    <button type="button" class="btn btn-block btn-info btn-lg">Temizle</button>
+                                </div>
+                                <input type="hidden" name="pkPersonel" id="pkPersonel" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            @if (Model != null)
+                            {
+                                <table id="example1" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th class="d-none">ID</th>
+                                            <th>Ad</th>
+                                            <th>Soyad</th>
+                                            <th>Cinsiyet</th>
+                                            <th>Üniversite</th>
+                                            <th class="d-none">Mezuniyet</th>
+                                            <th class="d-none">Zimmet</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var personel in Model)
+                                        {
+                                            <tr>
+                                                <td class="d-none">@personel.pkPersonel</td>
+                                                <td>@personel.Ad</td>
+                                                <td>@personel.Soyad</td>
+                                                <td>@personel.Cinsiyet</td>
+                                                <td>@personel.Universite</td>
+                                                <td class="d-none">@personel.fkMezuniyetDurumu</td>
+                                                <td class="d-none">@personel.ZimmetBilgileri</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#example1').DataTable({
+            "autoWidth": false,
+            "language": {
+                "sEmptyTable": "Tabloda herhangi bir veri mevcut değil",
+                "sInfo": "Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor",
+                "sInfoEmpty": "Kayıt bulunmuyor",
+                "sInfoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "_MENU_ Kayıt göster",
+                "sLoadingRecords": "Yükleniyor...",
+                "sProcessing": "İşleniyor...",
+                "sSearch": "Ara:",
+                "sZeroRecords": "Eşleşen kayıt bulunamadı",
+                "oPaginate": {
+                    "sFirst": "İlk",
+                    "sLast": "Son",
+                    "sNext": "Sonraki",
+                    "sPrevious": "Önceki"
+                },
+                "oAria": {
+                    "sSortAscending": ": artan sütun sıralamasını aktifleştir",
+                    "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+                }
+            }
+        });
+
+        $('#example1 tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+
+            if (data) {
+                var pkPersonel = data[0];
+                $('#pkPersonel').val(pkPersonel);
+                $('input[name="Ad"]').val(data[1] || '');
+                $('input[name="Soyad"]').val(data[2] || '');
+
+                var cinsiyet = data[3];
+                if (cinsiyet === 'K') {
+                    $('#cinsiyetKadın').prop('checked', true);
+                } else if (cinsiyet === 'E') {
+                    $('#cinsiyetErkek').prop('checked', true);
+                }
+
+                $('select[name="Universite"]').val(data[4]).trigger('change.select2');
+                $('select[name="Mezuniyet"]').val(data[5]).trigger('change.select2');
+
+                var zimmet = data[6] || '';
+
+                if (zimmet === '') {
+                    $('#zimmet').prop('checked', false);
+                    $('#zimmetTextbox').val('').prop('disabled', true);
+                } else {
+                    $('#zimmet').prop('checked', true);
+                    $('#zimmetTextbox').val(zimmet).prop('disabled', false);
+                }
+            }
+        });
+
+        $('.btn-info').on('click', function () {
+            $('input[type="text"]').val('');
+            $('#pkPersonel').val('');
+            $('#zimmet').prop('checked', false);
+            $('#zimmetTextbox').val('').prop('disabled', true);
+            $('.form-control.select2').val(0).trigger('change.select2');
+            $('input[name="Cinsiyet"]').prop('checked', false);
+        });
+
+        $('.btn-success').on('click', function () {
+            var id = $('#pkPersonel').val();
+
+            var ad = $('input[name="Ad"]').val();
+            if (ad === '') {
+                toastr.warning('Personel adı alanı zorunludur!', 'Uyarı');
+                return;
+            }
+
+            var soyad = $('input[name="Soyad"]').val();
+            if (soyad === '') {
+                toastr.warning('Personel soyadı alanı zorunludur!', 'Uyarı');
+                return;
+            }
+
+            var model = {
+                pkPersonel: id === '' ? 0 : id,
+                Ad: ad,
+                Soyad: soyad,
+                Cinsiyet: $('input[name="Cinsiyet"]:checked').val(),
+                ZimmetBilgileri: $('#zimmetTextbox').val(),
+                fkMezuniyetDurumu: $('select[name="Mezuniyet"]').val(),
+                Universite: $('select[name="Universite"]').val() === 0 ? "" : $('select[name="Universite"]').val()
+            };
+
+            console.log("Model:", model);
+
+            $.ajax({
+                url: '@Url.Action("PersonelKaydet", "AnaController")',
+                type: 'POST',
+                data: JSON.stringify(model),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message, 'Başarılı');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message, 'Hata');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Bir hata oluştu!", 'Hata');
+                }
+            });
+        });
+
+        $('.btn-danger').on('click', function () {
+            var id = $('#pkPersonel').val();
+            if (id === '' || id === null) {
+                toastr.warning('Lütfen silinecek personeli seçiniz!', 'Uyarı');
+                return;
+            }
+
+            var model = {
+                pkPersonel: id,
+            };
+
+            $.ajax({
+                url: '@Url.Action("PersonelSil", "AnaController")',
+                type: 'POST',
+                data: JSON.stringify(model),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message, 'Başarılı');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message, 'Hata');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Bir hata oluştu!", 'Hata');
+                }
+            });
+        });
+    });
+
+    function toggleTextbox() {
+        var checkbox = document.getElementById('zimmet');
+        var textbox = document.getElementById('zimmetTextbox');
+
+        if (checkbox.checked) {
+            textbox.disabled = false;
+        } else {
+            textbox.value = '';
+            textbox.disabled = true;
+        }
+    }
+</script>

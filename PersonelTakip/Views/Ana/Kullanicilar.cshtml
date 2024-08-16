@@ -1,0 +1,288 @@
+﻿@model IEnumerable<KullaniciModel>
+
+@{
+    ViewData["Title"] = "Kullanıcılar";
+}
+
+<link href="~/css/datatables-bs4/css/datatables.bootstrap4.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+<section class="content-header">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Kullanıcılar</h3>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4">
+                                    <label>Ad</label>
+                                    <input type="text" name="Ad" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>Soyad</label>
+                                    <input type="text" name="Soyad" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>Kullanıcı Adı</label>
+                                    <input type="text" name="KullaniciAdi" class="form-control">
+                                </div>
+
+                                <div class="col-4">
+                                    <label>Telefon</label>
+                                    <input type="text" name="Telefon" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>E-Posta</label>
+                                    <input type="text" name="EPosta" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>Yetki</label>
+                                    <select class="form-control select2" name="Yetki" style="width: 100%;">
+                                        <option value="0" selected="selected">Seçiniz...</option>
+                                        <option value="1">Admin</option>
+                                        <option value="2">Kullanıcı</option>
+                                    </select>
+                                </div>
+                                <div class="col-4">
+                                    <label>Şifre</label>
+                                    <input type="password" name="Sifre" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <label>Şifre Tekrar</label>
+                                    <input type="password" name="SifreTekrar" class="form-control">
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        </br>
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="sifreDegistir">
+                                            <label class="form-check-label" for="sifreDegistir">Bir sonraki girişte şifre değiştirsin</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-4" style="margin-top:10px;">
+                                    <button type="button" class="btn btn-block btn-success btn-lg">Kaydet</button>
+                                </div>
+                                <div class="col-4" style="margin-top:10px;">
+                                    <button type="button" class="btn btn-block btn-danger btn-lg">Sil</button>
+                                </div>
+                                <div class="col-4" style="margin-top:10px;">
+                                    <button type="button" class="btn btn-block btn-info btn-lg">Temizle</button>
+                                </div>
+                                <input type="hidden" name="pkKullanici" id="pkKullanici" value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <table id="example1" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="d-none">ID</th>
+                                        <th>Ad</th>
+                                        <th>Soyad</th>
+                                        <th>Kullanıcı Adı</th>
+                                        <th>Yetki</th>
+                                        <th class="d-none">Telefon</th>
+                                        <th class="d-none">E-Posta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var kullanici in Model)
+                                    {
+                                        <tr>
+                                            <td class="d-none">@kullanici.pkKullanici</td>
+                                            <td>@kullanici.Ad</td>
+                                            <td>@kullanici.Soyad</td>
+                                            <td>@kullanici.KullaniciAdi</td>
+                                            <td>@(kullanici.fkYetki == 1 ? "Admin" : "Kullanıcı")</td>
+                                            <td class="d-none">@kullanici.Telefon</td>
+                                            <td class="d-none">@kullanici.EPosta</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.22/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var table = $('#example1').DataTable({
+            "autoWidth": false,
+            "language": {
+                "sEmptyTable": "Tabloda herhangi bir veri mevcut değil",
+                "sInfo": "Toplam _TOTAL_ kayıttan _START_ - _END_ arası gösteriliyor",
+                "sInfoEmpty": "Kayıt bulunmuyor",
+                "sInfoFiltered": "(_MAX_ kayıt içerisinden bulunan)",
+                "sInfoPostFix": "",
+                "sInfoThousands": ".",
+                "sLengthMenu": "_MENU_ Kayıt göster",
+                "sLoadingRecords": "Yükleniyor...",
+                "sProcessing": "İşleniyor...",
+                "sSearch": "Ara:",
+                "sZeroRecords": "Eşleşen kayıt bulunamadı",
+                "oPaginate": {
+                    "sFirst": "İlk",
+                    "sLast": "Son",
+                    "sNext": "Sonraki",
+                    "sPrevious": "Önceki"
+                },
+                "oAria": {
+                    "sSortAscending": ": artan sütun sıralamasını aktifleştir",
+                    "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+                }
+            },
+            "columnDefs": [
+                {
+                    "targets": [4, 5],
+                    "visible": false
+                }
+            ]
+        });
+
+        $('#example1 tbody').on('click', 'tr', function () {
+            var data = table.row(this).data();
+
+            if (data) {
+                var pkKullanici = data[0];
+                $('#pkKullanici').val(pkKullanici);
+                $('input[name="Ad"]').val(data[1] || '');
+                $('input[name="Soyad"]').val(data[2] || '');
+                $('input[name="KullaniciAdi"]').val(data[3] || '');
+
+                var yetki = data[4];
+                var yetkiValue = yetki === "Admin" ? 1 : 2;
+
+                $('.form-control.select2').val(yetkiValue).trigger('change.select2');
+                $('input[name="Telefon"]').val(data[5] || '');
+                $('input[name="EPosta"]').val(data[6] || '');
+            }
+        });
+
+        $('.btn-info').on('click', function () {
+            $('input[type="text"]').val('');
+            $('input[type="password"]').val('');
+            $('#pkKullanici').val('');
+            $('#sifreDegistir').prop('checked', false);
+            $('.form-control.select2').val(0).trigger('change.select2');
+        });
+
+        $('.btn-success').on('click', function () {
+            var id = $('#pkKullanici').val();
+            var sifre = $('input[name="Sifre"]').val();
+
+            if ((id !== '' && sifre !== '') || id === '') {
+                var sifreTekrar = $('input[name="SifreTekrar"]').val();
+                if (sifre !== sifreTekrar) {
+                    toastr.warning('Şifreler birbiri ile eşleşmiyor!', 'Uyarı');
+                    return;
+                }
+                if (sifre.length <= 7) {
+                    toastr.warning('Şifre en az 8 karakter olmalıdır!', 'Uyarı');
+                    return;
+                }
+            }
+
+            var kullaniciAdi = $('input[name="KullaniciAdi"]').val();
+            if (kullaniciAdi === '') {
+                toastr.warning('Kullanıcı adı alanı zorunludur!', 'Uyarı');
+                return;
+            }
+
+            var yetki = $('select[name="Yetki"]').val();
+            if (yetki === '0') {
+                toastr.warning('Lütfen kullanıcının yetkisini belirleyiniz!', 'Uyarı');
+                return;
+            }
+
+            var model = {
+                pkKullanici: id === '' ? 0 : id,
+                Ad: $('input[name="Ad"]').val(),
+                Soyad: $('input[name="Soyad"]').val(),
+                KullaniciAdi: kullaniciAdi,
+                Telefon: $('input[name="Telefon"]').val(),
+                EPosta: $('input[name="EPosta"]').val(),
+                fkYetki: yetki,
+                Sifre: sifre,
+                SifreDegistir: $('#sifreDegistir').is(':checked')
+            };
+
+            $.ajax({
+                url: '@Url.Action("KullaniciKaydet", "AnaController")',
+                type: 'POST',
+                data: JSON.stringify(model),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message, 'Başarılı');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message, 'Hata');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Bir hata oluştu!", 'Hata');
+                }
+            });
+        });
+
+        $('.btn-danger').on('click', function () {
+            var id = $('#pkKullanici').val();
+            if (id === '' || id === null) {
+                toastr.warning('Lütfen silinecek kullanıcıyı seçiniz!', 'Uyarı');
+                return;
+            }
+
+            var model = {
+                pkKullanici: id,
+            };
+
+            $.ajax({
+                url: '@Url.Action("KullaniciSil", "AnaController")',
+                type: 'POST',
+                data: JSON.stringify(model),
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message, 'Başarılı');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+                    } else {
+                        toastr.error(response.message, 'Hata');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    toastr.error("Bir hata oluştu!", 'Hata');
+                }
+            });
+        });
+    });
+</script>
+
+
